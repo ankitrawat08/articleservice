@@ -1,6 +1,5 @@
 package articleservice.io.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +45,9 @@ public class ArticleController {
 	// create an article
 	@RequestMapping(value = "/api/articles", method = RequestMethod.POST, consumes = "application/json")
 	public ResponseEntity<Article> createArticle(@RequestBody ArticleRequest request) {
-		List<String> errors = validateCreateRequest(request);
+
 		try {
-			if (errors.size() == 0) {
+			if (validateCreateRequest(request)) {
 				article = articleService.createArticle(request);
 			} else
 				return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
@@ -75,8 +74,8 @@ public class ArticleController {
 	// Get an article based on slug-id
 	@RequestMapping(value = "/api/articles/{slug-uuid}", method = RequestMethod.GET)
 	public ResponseEntity<Article> getArticle(@PathVariable(value = "slug-uuid") String slugUuid) throws Exception {
-		List<String> errors = validate(slugUuid);
-		if (errors.size() == 0) {
+
+		if (validate(slugUuid)) {
 			article = articleService.getArticle(slugUuid);
 		} else {
 			return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
@@ -100,8 +99,7 @@ public class ArticleController {
 	@RequestMapping(value = "/api/articles/{slug-uuid}", method = RequestMethod.PATCH)
 	public ResponseEntity<Article> updateArticle(@PathVariable(value = "slug-uuid") String slugUuid,
 			@RequestBody ArticleRequest articles) {
-		List<String> errors = validateUpdateRequest(articles);
-		if (errors.size() == 0) {
+		if (validateUpdateRequest(articles)) {
 			article = articleService.updateArticle(articles.getTitle(), slugUuid);
 		} else {
 			return new ResponseEntity<Article>(HttpStatus.BAD_REQUEST);
@@ -112,8 +110,8 @@ public class ArticleController {
 	// Delete an article based on slug-id
 	@RequestMapping(value = "/api/articles/{slug-uuid}", method = RequestMethod.DELETE)
 	public void deleteArticle(@PathVariable(value = "slug-uuid") String slugUuid) {
-		List<String> errors = validate(slugUuid);
-		if (errors.size() == 0) {
+
+		if (validate(slugUuid)) {
 			articleService.deleteArticle(slugUuid);
 		} else {
 			ResponseEntity.status(HttpStatus.BAD_REQUEST);
@@ -133,47 +131,44 @@ public class ArticleController {
 
 	}
 
-	public List<String> validateCreateRequest(ArticleRequest articleRequest) {
-		List<String> errors = new ArrayList<>();
+	public Boolean validateCreateRequest(ArticleRequest articleRequest) {
 
 		if (articleRequest.getDescription() == null || articleRequest.getDescription().length() == 0) {
-			errors.add("Missing Article description");
+			return false;
 		}
 		if (articleRequest.getTitle() == null || articleRequest.getTitle().length() == 0) {
-			errors.add("Missing Article title");
+			return false;
 		}
 		if (articleRequest.getBody() == null || articleRequest.getBody().length() == 0) {
-			errors.add("Missing Article body");
+			return false;
 		}
 		if (articleRequest.getTags() == null || articleRequest.getTags().size() == 0) {
-			errors.add("Missing Article tags");
+			return false;
 		}
 
 		if (validateBody(articleRequest))
-			errors.add("Article body already exists");
+			return false;
 
-		return errors;
+		return true;
 	}
 
-	public List<String> validateUpdateRequest(ArticleRequest articleRequest) {
-		List<String> errors = new ArrayList<>();
+	public Boolean validateUpdateRequest(ArticleRequest articleRequest) {
 
 		if (articleRequest.getTitle() == null || articleRequest.getTitle().length() == 0) {
-			errors.add("Missing Article Body");
+			return false;
 		}
 		if (validateBody(articleRequest))
-			errors.add("Article body already exists");
+			return false;
 
-		return errors;
+		return true;
 	}
 
-	public List<String> validate(String id) {
-		List<String> errors = new ArrayList<>();
+	public Boolean validate(String id) {
 
-		if (id == null || id.length() == 0) {
-			errors.add("Missing Article SlugId");
-		}
-		return errors;
+		if (id == null || id.length() == 0)
+			return false;
+
+		return true;
 	}
 
 	public Boolean validateBody(ArticleRequest articleRequest) {
@@ -185,10 +180,10 @@ public class ArticleController {
 		for (Article article : articles) {
 			String source = article.getBody();
 			if (service.score(source, target) > 0.70)
-				return true;
+				return false;
 		}
 
-		return false;
+		return true;
 	}
 
 }
