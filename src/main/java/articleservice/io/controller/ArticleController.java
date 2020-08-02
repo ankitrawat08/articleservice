@@ -1,5 +1,6 @@
 package articleservice.io.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -180,10 +181,10 @@ public class ArticleController {
 		for (Article article : articles) {
 			String source = article.getBody();
 			if (service.score(source, target) > 0.70)
-				return false;
+				return true;
 		}
 
-		return true;
+		return false;
 	}
 
 }

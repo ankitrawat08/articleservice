@@ -44,7 +44,6 @@ public class ArticleService {
 	}
 
 	public void updateArticleTitleAndSlug(String str, String slugId) {
-		// validate(article);
 		Article article = getArticle(slugId);
 		article.setTitle(slugId);
 		article.setSlug(slugId);

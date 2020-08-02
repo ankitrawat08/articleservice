@@ -1,15 +1,12 @@
 package io.ankit;
 
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.json.JSONException;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import articleservice.io.controller.ArticleController;
 import articleservice.io.controller.request.ArticleRequest;
@@ -18,14 +15,9 @@ public class ArticleServiceTest {
 
 	ArticleController articleController;
 
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	@Test
 	public void testcreateArticleTest_WhenDescriptionIsNull() throws JSONException {
 		articleController = new ArticleController();
-		thrown.expect(Exception.class);
-		thrown.expectMessage(startsWith("Missing Article description"));
 		ArticleRequest request = createArticleRequest();
 		request.setDescription(null);
 		assertFalse(articleController.validateCreateRequest(request));
@@ -34,8 +26,6 @@ public class ArticleServiceTest {
 	@Test
 	public void testcreateArticleTestWhenTitleIsNull() throws JSONException {
 		articleController = new ArticleController();
-		thrown.expect(Exception.class);
-		thrown.expectMessage(startsWith("Missing Article description"));
 		ArticleRequest request = createArticleRequest();
 		request.setTitle(null);
 		assertFalse(articleController.validateCreateRequest(request));
@@ -44,8 +34,6 @@ public class ArticleServiceTest {
 	@Test
 	public void testcreateArticleTestWhenBodyNull() throws JSONException {
 		articleController = new ArticleController();
-		thrown.expect(Exception.class);
-		thrown.expectMessage(startsWith("Missing Article description"));
 		ArticleRequest request = createArticleRequest();
 		request.setBody(null);
 		assertFalse(articleController.validateCreateRequest(request));
@@ -54,8 +42,6 @@ public class ArticleServiceTest {
 	@Test
 	public void testcreateArticleTestWhenTagsIsNull() throws JSONException {
 		articleController = new ArticleController();
-		thrown.expect(Exception.class);
-		thrown.expectMessage(startsWith("Missing Article description"));
 		ArticleRequest request = createArticleRequest();
 		assertFalse(articleController.validateCreateRequest(request));
 	}
